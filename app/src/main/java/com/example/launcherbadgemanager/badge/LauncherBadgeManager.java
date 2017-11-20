@@ -23,7 +23,9 @@ public class LauncherBadgeManager {
         sLauncherBadgeLists.add(HuaWeiLauncherBadge.class);
         sLauncherBadgeLists.add(XiaoMiLauncherBadge.class);
         sLauncherBadgeLists.add(SamSungLauncherBadge.class);
-        sLauncherBadgeLists.add(SonyLauncherBadger.class);
+        sLauncherBadgeLists.add(SonyLauncherBadge.class);
+        sLauncherBadgeLists.add(VivoLauncherBadge.class);
+        sLauncherBadgeLists.add(OppoLauncherBadge.class);
     }
     private LauncherBadgeManager() {}
 

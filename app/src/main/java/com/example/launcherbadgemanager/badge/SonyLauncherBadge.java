@@ -12,7 +12,7 @@ import android.os.Looper;
 import java.util.Arrays;
 import java.util.List;
 
-public class SonyLauncherBadger implements Badge {
+public class SonyLauncherBadge implements Badge {
 
     private static final String INTENT_ACTION = "com.sonyericsson.home.action.UPDATE_BADGE";
     private static final String INTENT_EXTRA_PACKAGE_NAME = "com.sonyericsson.home.intent.extra.badge.PACKAGE_NAME";
