@@ -9,9 +9,11 @@ import android.util.Log;
 
 import com.example.launcherbadgemanager.badge.XiaoMiLauncherBadge;
 
+import java.util.Random;
+
 public class BadgeIntentService extends IntentService {
     private static final String TAG = BadgeIntentService.class.getSimpleName();
-    private int notificationId = 0;
+    private static int notificationId = 0;
 
     public BadgeIntentService() {
         super("BadgeIntentService");
@@ -28,21 +30,26 @@ public class BadgeIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d(TAG, TAG + "onStart");
+        Log.d(TAG, TAG + "onHandleIntent");
         if (intent != null) {
             int badgeCount = intent.getIntExtra("badgeCount", 0);
             if (mNotificationManager != null) {
                 mNotificationManager.cancel(notificationId);
-                notificationId++;
+                Random random = new Random();
+                notificationId = random.nextInt(255);
             }
 
             Notification.Builder builder = new Notification.Builder(getApplicationContext())
                 .setContentTitle("")
                 .setContentText("")
-                .setSmallIcon(R.mipmap.ic_launcher);
+                .setSmallIcon(R.mipmap.ic_launcher)
+                    .setAutoCancel(true);
             Notification notification = builder.build();
             XiaoMiLauncherBadge.applyNotification(getApplicationContext(), notification, badgeCount);
-            mNotificationManager.notify(notificationId, notification);
+
+            if (mNotificationManager != null) {
+                mNotificationManager.notify(notificationId, notification);
+            }
         }
     }
 }
