@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.os.Build;
 import android.util.Log;
 
 import java.util.LinkedList;
@@ -26,6 +27,7 @@ public class LauncherBadgeManager {
         sLauncherBadgeLists.add(SonyLauncherBadge.class);
         sLauncherBadgeLists.add(VivoLauncherBadge.class);
         sLauncherBadgeLists.add(OppoLauncherBadge.class);
+        sLauncherBadgeLists.add(ZteLauncherBadge.class);
     }
     private LauncherBadgeManager() {}
 
@@ -60,10 +62,11 @@ public class LauncherBadgeManager {
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_HOME);
+
+        // Intent.ACTION_MAIN 和 Intent.CATEGORY_HOME 过滤出该手机安装的符合条件的 app，一般为 launcher setting app
         List<ResolveInfo> resolveInfos = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
         for (ResolveInfo resolveInfo:resolveInfos) {
             String packagename = resolveInfo.activityInfo.packageName;
-            Log.d(TAG, "packagename: " + packagename);
             Badge badge = null;
             for (Class<? extends Badge> launcherBadge:sLauncherBadgeLists) {
                 try {
@@ -71,11 +74,17 @@ public class LauncherBadgeManager {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+                // 该手机的 launcher 包名
                 if (badge != null && badge.getSupportedLaunchers().contains(packagename)) {
                     sCurrentLauncherBadge = badge;
                     return;
                 }
             }
+        }
+        if (sCurrentLauncherBadge == null) {
+            if (Build.MANUFACTURER.equalsIgnoreCase("ZTE"))
+                sCurrentLauncherBadge = new ZteLauncherBadge();
         }
     }
 }
