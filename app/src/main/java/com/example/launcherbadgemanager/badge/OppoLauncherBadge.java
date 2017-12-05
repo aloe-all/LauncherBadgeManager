@@ -25,6 +25,7 @@ public class OppoLauncherBadge implements Badge {
     private static final String INTENT_EXTRA_BADGE_COUNT = "number";
     private static final String INTENT_EXTRA_BADGE_UPGRADENUMBER = "upgradeNumber";
     private static final String INTENT_EXTRA_BADGEUPGRADE_COUNT = "app_badge_count";
+    private static final String INTENT_EXTRA_BADGEUPGRADE_METHOD = "setAppBadgeCount";
 
     @Override
     public void updateLauncherBadgeCount(Context context, ComponentName componentName, int badgeCount) {
@@ -43,7 +44,7 @@ public class OppoLauncherBadge implements Badge {
             } else {
                 Bundle extras = new Bundle();
                 extras.putInt(INTENT_EXTRA_BADGEUPGRADE_COUNT, badgeCount);
-                context.getContentResolver().call(Uri.parse(PROVIDER_CONTENT_URI), "setAppBadgeCount", null, extras);
+                context.getContentResolver().call(Uri.parse(PROVIDER_CONTENT_URI), INTENT_EXTRA_BADGEUPGRADE_METHOD, null, extras);
             }
         } catch (Exception e) {
             e.printStackTrace();

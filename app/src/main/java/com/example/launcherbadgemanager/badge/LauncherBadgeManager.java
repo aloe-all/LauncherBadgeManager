@@ -28,6 +28,8 @@ public class LauncherBadgeManager {
         sLauncherBadgeLists.add(VivoLauncherBadge.class);
         sLauncherBadgeLists.add(OppoLauncherBadge.class);
         sLauncherBadgeLists.add(ZteLauncherBadge.class);
+        sLauncherBadgeLists.add(DefaultLauncherBadge.class);
+        sLauncherBadgeLists.add(HtcLauncherBadge.class);
     }
     private LauncherBadgeManager() {}
 
@@ -83,8 +85,11 @@ public class LauncherBadgeManager {
             }
         }
         if (sCurrentLauncherBadge == null) {
-            if (Build.MANUFACTURER.equalsIgnoreCase("ZTE"))
+            if (Build.MANUFACTURER.equalsIgnoreCase("ZTE")) {
                 sCurrentLauncherBadge = new ZteLauncherBadge();
+            } else {
+                sCurrentLauncherBadge = new DefaultLauncherBadge();
+            }
         }
     }
 }

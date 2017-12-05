@@ -18,19 +18,20 @@ import java.util.List;
 
 public class SamSungLauncherBadge implements Badge {
     private static final String TAG = SamSungLauncherBadge.class.getSimpleName();
+
     private static final String CONTENT_URI = "content://com.sec.badge/apps?notify=true";
     private static final String[] CONTENT_PROJECTION = new String[]{"_id", "class"};
-    private SamSungHighSDKLauncherBadge mSamSungHighSDKLauncherBadge;
+    private DefaultLauncherBadge mDefaultLauncherBadge;
 
     public SamSungLauncherBadge() {
         if (Build.VERSION.SDK_INT >= 21) {
-            mSamSungHighSDKLauncherBadge = new SamSungHighSDKLauncherBadge();
+            mDefaultLauncherBadge = new DefaultLauncherBadge();
         }
     }
     @Override
     public void updateLauncherBadgeCount(Context context, ComponentName componentName, int badgeCount) {
-        if (mSamSungHighSDKLauncherBadge != null && mSamSungHighSDKLauncherBadge.isSupported(context)) {
-            mSamSungHighSDKLauncherBadge.updateLauncherBadgeCount(context, componentName, badgeCount);
+        if (mDefaultLauncherBadge != null && mDefaultLauncherBadge.isSupported(context)) {
+            mDefaultLauncherBadge.updateLauncherBadgeCount(context, componentName, badgeCount);
         } else {
             Uri mUri = Uri.parse(CONTENT_URI);
             ContentResolver contentResolver = context.getContentResolver();
@@ -75,6 +76,6 @@ public class SamSungLauncherBadge implements Badge {
 
     @Override
     public List<String> getSupportedLaunchers() {
-        return Arrays.asList("com.sec.android.app.launcher");
+        return Arrays.asList("com.sec.android.app.launcher", "com.sec.android.app.twlauncher");
     }
 }
