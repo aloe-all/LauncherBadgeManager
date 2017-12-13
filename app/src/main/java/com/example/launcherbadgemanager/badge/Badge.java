@@ -12,7 +12,7 @@ import java.util.List;
 public interface Badge {
 
     /**
-     *  更新 launcher 快捷方式的角标
+     *  更新 launcher 的 app icon 的角标
      * @param context
      * @param componentName 桌面图标对应的应用入口Activity类
      * @param badgeCount 角标数量

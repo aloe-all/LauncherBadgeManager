@@ -15,17 +15,24 @@ import java.util.List;
 
 public class HuaWeiLauncherBadge implements Badge {
     private static final String TAG = HuaWeiLauncherBadge.class.getSimpleName();
-    private static final String HUAWEIBADGEURL = "content://com.huawei.android.launcher.settings/badge/";
-    private static final String HUAWEIBADGEMETHOD = "change_badge";
+    private static final String HUAWEI_BADGEURL = "content://com.huawei.android.launcher.settings/badge/";
+    private static final String HUAWEI_BADGE_METHOD = "change_badge";
+    private static final String HUAWEI_PACKAGE_NAME = "com.huawei.android.launcher";
 
     @Override
     public void updateLauncherBadgeCount(Context context, ComponentName componentName, int badgeCount) {
-        try {
             Bundle bundle = new Bundle();
+
+            // 应用包名
             bundle.putString("package", context.getPackageName());
+
+            // 桌面图标对应的应用入口Activity类
             bundle.putString("class", componentName.getClassName());
+
+            // 角标数字
             bundle.putInt("badgenumber", badgeCount);
-            context.getContentResolver().call(Uri.parse(HUAWEIBADGEURL), HUAWEIBADGEMETHOD, null, bundle);
+        try {
+            context.getContentResolver().call(Uri.parse(HUAWEI_BADGEURL), HUAWEI_BADGE_METHOD, null, bundle);
         } catch (Exception e) {
             Log.d(TAG, TAG + " Exception " + e.toString());
         }
@@ -33,6 +40,6 @@ public class HuaWeiLauncherBadge implements Badge {
 
     @Override
     public List<String> getSupportedLaunchers() {
-        return Arrays.asList("com.huawei.android.launcher");
+        return Arrays.asList(HUAWEI_PACKAGE_NAME);
     }
 }

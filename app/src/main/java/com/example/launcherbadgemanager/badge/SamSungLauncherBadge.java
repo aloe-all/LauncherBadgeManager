@@ -18,40 +18,57 @@ import java.util.List;
 
 public class SamSungLauncherBadge implements Badge {
     private static final String TAG = SamSungLauncherBadge.class.getSimpleName();
-
+    private static final String SAMSUNG_LAUNCHER_PACKAGENAME = "com.sec.android.app.launcher";
+    private static final String SAMSUNG_TW_LAUNCHER_PACKAGENAME = "com.sec.android.app.twlauncher";
     private static final String CONTENT_URI = "content://com.sec.badge/apps?notify=true";
     private static final String[] CONTENT_PROJECTION = new String[]{"_id", "class"};
     private DefaultLauncherBadge mDefaultLauncherBadge;
 
+    /**
+     *  三星 Build.VERSION_CODES.LOLLIPOP 21 及以上的版本使用广播的形式更新角标，使用 {@link #mDefaultLauncherBadge}
+     *  Build.VERSION_CODES.LOLLIPOP 21 以下的版本的使用更新数据库的形式更新角标
+     */
     public SamSungLauncherBadge() {
-        if (Build.VERSION.SDK_INT >= 21) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mDefaultLauncherBadge = new DefaultLauncherBadge();
         }
     }
     @Override
     public void updateLauncherBadgeCount(Context context, ComponentName componentName, int badgeCount) {
-        if (mDefaultLauncherBadge != null && mDefaultLauncherBadge.isSupported(context)) {
+
+        //发送广播的的方式 更新角标
+        if (mDefaultLauncherBadge != null && mDefaultLauncherBadge.isSupportBroadcast(context)) {
             mDefaultLauncherBadge.updateLauncherBadgeCount(context, componentName, badgeCount);
         } else {
-            Uri mUri = Uri.parse(CONTENT_URI);
+
+            // 更新数据库里的表的方式 更新角标
+            Uri badgeUri = Uri.parse(CONTENT_URI);
             ContentResolver contentResolver = context.getContentResolver();
             Cursor cursor = null;
             try {
-                cursor = contentResolver.query(mUri, CONTENT_PROJECTION, "package=?", new String[]{componentName.getPackageName()}, null);
+                cursor = contentResolver.query(badgeUri, CONTENT_PROJECTION, "package=?", new String[]{componentName.getPackageName()}, null);
                 if (cursor != null) {
-                    String entryActivityName = componentName.getClassName();
-                    boolean entryActivityExist = false;
+                    String launcherActivityName = componentName.getClassName();
+                    boolean isLauncherActivityExist = false;
                     while (cursor.moveToNext()) {
+
+                        //获取表的第一列 "_id" 的值
                         int id = cursor.getInt(0);
                         ContentValues contentValues = getContentValues(componentName, badgeCount, false);
-                        contentResolver.update(mUri, contentValues, "_id=?", new String[]{String.valueOf(id)});
-                        if (entryActivityName.equals(cursor.getString(cursor.getColumnIndex("class")))) {
-                            entryActivityExist = true;
+
+                        //更新 badge角标
+                        contentResolver.update(badgeUri, contentValues, "_id=?", new String[]{String.valueOf(id)});
+                        if (launcherActivityName.equals(cursor.getString(cursor.getColumnIndex("class")))) {
+                            isLauncherActivityExist = true;
                         }
                     }
-                    if (!entryActivityExist) {
+
+                    // 表里没有手百的 角标记录
+                    if (!isLauncherActivityExist) {
                         ContentValues contentValues = getContentValues(componentName, badgeCount, true);
-                        contentResolver.insert(mUri, contentValues);
+
+                        // 插入展示 badge 角标
+                        contentResolver.insert(badgeUri, contentValues);
                     }
                 }
             } catch (Exception e) {
@@ -64,6 +81,13 @@ public class SamSungLauncherBadge implements Badge {
         }
     }
 
+    /**
+     *  组织 ContentValues
+     * @param componentName
+     * @param badgeCount
+     * @param isInsert true，向表中新插入一条记录；false 更新 已有记录的 badgecount
+     * @return
+     */
     private ContentValues getContentValues(ComponentName componentName, int badgeCount, boolean isInsert) {
         ContentValues contentValues = new ContentValues();
         if (isInsert) {
@@ -76,6 +100,6 @@ public class SamSungLauncherBadge implements Badge {
 
     @Override
     public List<String> getSupportedLaunchers() {
-        return Arrays.asList("com.sec.android.app.launcher", "com.sec.android.app.twlauncher");
+        return Arrays.asList(SAMSUNG_LAUNCHER_PACKAGENAME, SAMSUNG_TW_LAUNCHER_PACKAGENAME);
     }
 }

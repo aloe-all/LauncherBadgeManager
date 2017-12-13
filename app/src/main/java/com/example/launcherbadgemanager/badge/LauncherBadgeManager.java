@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Build;
-import android.util.Log;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,6 +18,10 @@ public class LauncherBadgeManager {
     private static Badge sCurrentLauncherBadge;
     private static LauncherBadgeManager sLauncherBadgeManager;
     private static final LinkedList<Class<? extends Badge>> sLauncherBadgeLists = new LinkedList<Class<? extends Badge>>();
+
+    // 展示的 icon 角标数量最大为99 ，超过99均显示为 99
+    private static final int sBadgeCount = 99;
+
     static {
         sLauncherBadgeLists.add(HuaWeiLauncherBadge.class);
         sLauncherBadgeLists.add(XiaoMiLauncherBadge.class);
@@ -45,15 +47,22 @@ public class LauncherBadgeManager {
     }
 
     public void applyUpdatelauncherBadge(Context context, int badgeCount) {
-        Log.d(TAG, TAG + " applyUpdatelauncherBadge()");
+
+        //当角标数字超过 99 时，统一显示为 99
+        if (badgeCount > sBadgeCount) {
+            badgeCount = sBadgeCount;
+        }
         if (context == null) {
-            Log.d(TAG, TAG + " context == null");
             return;
         }
         if (sCurrentLauncherBadge == null) {
             initBadge(context);
         }
+
+        // 获取 符合 android.intent.action.MAIN 和 android.intent.category.LAUNCHER 的过滤条件的  Intent
         Intent launcherIntent = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
+
+        // 获取 launcherIntent 启动的 ComponentName
         ComponentName componentName = launcherIntent.getComponent();
         if (sCurrentLauncherBadge != null) {
             sCurrentLauncherBadge.updateLauncherBadgeCount(context, componentName, badgeCount);
@@ -65,7 +74,7 @@ public class LauncherBadgeManager {
         intent.setAction(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_HOME);
 
-        // Intent.ACTION_MAIN 和 Intent.CATEGORY_HOME 过滤出该手机安装的符合条件的 app，一般为 launcher setting app
+        // Intent.ACTION_MAIN 和 Intent.CATEGORY_HOME 过滤出该手机安装的符合intent过滤条件的 app，一般为 launcher,setting app
         List<ResolveInfo> resolveInfos = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
         for (ResolveInfo resolveInfo:resolveInfos) {
             String packagename = resolveInfo.activityInfo.packageName;
