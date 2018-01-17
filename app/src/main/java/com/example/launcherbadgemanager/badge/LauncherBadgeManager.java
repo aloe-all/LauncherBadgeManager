@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Build;
+import android.util.Log;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -47,6 +49,7 @@ public class LauncherBadgeManager {
     }
 
     public void applyUpdatelauncherBadge(Context context, int badgeCount) {
+        Log.d(TAG, TAG + " applyUpdatelauncherBadge Build.MANUFACTURER:" + Build.MANUFACTURER);
 
         //当角标数字超过 99 时，统一显示为 99
         if (badgeCount > sBadgeCount) {
@@ -78,6 +81,7 @@ public class LauncherBadgeManager {
         List<ResolveInfo> resolveInfos = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
         for (ResolveInfo resolveInfo:resolveInfos) {
             String packagename = resolveInfo.activityInfo.packageName;
+            Log.d(TAG, TAG + " resolveInfos packagename: " + packagename);
             Badge badge = null;
             for (Class<? extends Badge> launcherBadge:sLauncherBadgeLists) {
                 try {
@@ -94,6 +98,7 @@ public class LauncherBadgeManager {
             }
         }
         if (sCurrentLauncherBadge == null) {
+            Log.d(TAG, TAG + " sCurrentLauncherBadge == null Build.MANUFACTURER:" + Build.MANUFACTURER);
             if (Build.MANUFACTURER.equalsIgnoreCase("ZTE")) {
                 sCurrentLauncherBadge = new ZteLauncherBadge();
             } else {

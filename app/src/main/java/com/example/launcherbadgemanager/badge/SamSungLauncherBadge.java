@@ -31,6 +31,7 @@ public class SamSungLauncherBadge implements Badge {
     public SamSungLauncherBadge() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mDefaultLauncherBadge = new DefaultLauncherBadge();
+            Log.d(TAG, TAG + "mDefaultLauncherBadge = new DefaultLauncherBadge()");
         }
     }
     @Override
@@ -39,8 +40,10 @@ public class SamSungLauncherBadge implements Badge {
         //发送广播的的方式 更新角标
         if (mDefaultLauncherBadge != null && mDefaultLauncherBadge.isSupportBroadcast(context)) {
             mDefaultLauncherBadge.updateLauncherBadgeCount(context, componentName, badgeCount);
+            Log.d(TAG, TAG + "mDefaultLauncherBadge.updateLauncherBadgeCount()");
         } else {
 
+            Log.d(TAG, TAG + "Uri badgeUri = Uri.parse(CONTENT_URI)");
             // 更新数据库里的表的方式 更新角标
             Uri badgeUri = Uri.parse(CONTENT_URI);
             ContentResolver contentResolver = context.getContentResolver();

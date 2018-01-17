@@ -1,6 +1,6 @@
 package com.example.launcherbadgemanager;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -12,7 +12,7 @@ import com.example.launcherbadgemanager.badge.LauncherBadgeManager;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends Activity implements View.OnClickListener{
     private EditText mEditText;
     private Button mButton;
     private Button mClearButton;
@@ -36,12 +36,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.update_badge:
                 String badgeCount = mEditText.getText().toString().trim();
                 if (!TextUtils.isEmpty(badgeCount) && isNumeric(badgeCount)) {
-                    LauncherBadgeManager.getInstance().applyUpdatelauncherBadge(MainActivity.this, Integer.valueOf(badgeCount));
+                    LauncherBadgeManager.getInstance().applyUpdatelauncherBadge(getApplicationContext(), Integer.valueOf(badgeCount));
                     finish();
                 }
                 break;
             case R.id.clear_badge:
-                LauncherBadgeManager.getInstance().applyUpdatelauncherBadge(MainActivity.this, Integer.valueOf("0"));
+                LauncherBadgeManager.getInstance().applyUpdatelauncherBadge(getApplicationContext(), Integer.valueOf("0"));
                 finish();
                 break;
         }
